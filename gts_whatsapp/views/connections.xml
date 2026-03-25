@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <!-- Tree View -->
+    <record id="view_whatsapp_connection_list" model="ir.ui.view">
+        <field name="name">whatsapp.connection.list</field>
+        <field name="model">whatsapp.connection</field>
+        <field name="arch" type="xml">
+            <list string="Whatsapp Connections" decoration-success="logged_in" decoration-danger="not logged_in">
+                <field name="name"/>
+                <field name="connection_status"/>
+                <field name="logged_in" widget="boolean_toggle"/>
+                <field name="api_usage_percent" widget="progressbar" options="{'max_value': 100, 'bar_color': 'success'}"/>
+                <field name="requests_left"/>
+                <button name="refresh_usage" string="" type="object" icon="fa-refresh" class="btn btn-sm btn-outline-success"/>
+                <button name="login" string="" type="object" icon="fa-user" class="btn btn-sm btn-outline-primary"/>
+                <button name="logout" string="" type="object" icon="oi-close" class="btn btn-sm btn-outline-danger"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Form View -->
+    <record id="view_whatsapp_connection_form" model="ir.ui.view">
+        <field name="name">whatsapp.connection.form</field>
+        <field name="model">whatsapp.connection</field>
+        <field name="arch" type="xml">
+            <form string="Whatsapp Connection">
+                <sheet>
+                    <div style="display: flex; flex-direction: column; gap: 20px;">
+                        <!-- Connection Info -->
+                        <div style="background: #fff; border: 1px solid #e0e0e0; border-radius: 8px; padding: 16px 24px; display: flex; align-items: center; justify-content: space-between;">
+                            <h1 style="margin: 0; color: #222; font-size: 1.5rem; font-weight: 700; letter-spacing: -1px; display: flex; align-items: center;">
+                                <i class="fa fa-whatsapp" style="color: #28a745; margin-right: 12px;"/> <field name="name"/>
+                            </h1>
+                            <field name="status_badge" widget="badge" options="{'class_map': {'Logged In': 'success', 'Logged Out': 'danger'}}"/>
+                            <field name="connection_status" widget="badge" options="{'class_map': {'WORKING': 'success', 'STOPPED': 'danger', 'STARTING': 'warning', 'SCAN_QR_CODE': 'info'}}"/>
+                        </div>
+                        <!-- API Details + Options Row -->
+                        <div style="display: flex; gap: 20px;">
+                            <!-- API Details Card -->
+                            <div style="flex: 2; background: #fff; border: 1px solid #e0e0e0; border-radius: 8px; padding: 16px 20px; display: flex; flex-direction: column; gap: 12px; min-width: 0;">
+                                <span class="o_form_label" style="font-weight: 600; color: #222;">API Key</span>
+                                <field name="client_secret" placeholder="Enter your API Key here" style="width: 100%;"/>
+                                <span class="o_form_label" style="font-weight: 600; color: #222;">Webhook URL</span>
+                                <field name="webhook_url" placeholder="Enter your Webhook URL here" style="width: 100%; min-width: 220px; max-width: 100%;"/>
+                            </div>
+                            <!-- Options Card -->
+                            <div style="flex: 1; background: #fff; border: 1px solid #e0e0e0; border-radius: 8px; padding: 16px 20px; display: flex; flex-direction: column; gap: 16px; min-width: 0;">
+                                <span class="o_form_label" style="font-weight: 600; color: #222;">Set Typing</span>
+                                <field name="set_typing" widget="boolean_toggle"/>
+                                <span class="o_form_label" style="font-weight: 600; color: #222;">Auto Send</span>
+                                <field name="auto_send" widget="boolean_toggle"/>
+                            </div>
+                        </div>
+                        <!-- API Usage Card -->
+                        <div style="background: #fff; border: 1px solid #e0e0e0; border-radius: 8px; padding: 16px 24px; display: flex; flex-direction: column; gap: 8px;">
+                            <span class="o_form_label" style="font-weight: 600; color: #222;">API Usage</span>
+                            <field name="api_usage_percent" widget="progressbar" options="{'max_value': 100, 'bar_color': 'success'}" style="height: 32px;"/>
+                            <div style="display: flex; gap: 24px; margin-top: 8px; color: #222; align-items: center;">
+                                <div><b>Used:</b> <field name="requests_made_today" readonly="1"/></div>
+                                <div><b>Quota:</b> <field name="max_requests_per_day" readonly="1"/></div>
+                                <div><b>Left:</b> <field name="requests_left" readonly="1"/></div>
+                                <button name="refresh_usage" string="Refresh Usage" type="object" icon="fa-refresh" class="btn btn-sm btn-outline-secondary" style="margin-left: auto;"/>
+                            </div>
+                        </div>
+                        <!-- Actions Row -->
+                        <div style="display: flex; gap: 16px; margin-bottom: 8px; justify-content: flex-end;">
+                            <button string="Login" class="btn btn-primary" icon="fa-user" name="login" type="object" style="font-weight: 600;"/>
+                            <button string="Logout" class="btn btn-outline-secondary" icon="oi-close" name="logout" type="object" style="font-weight: 600;"/>
+                            <button string="Set as Default" class="btn btn-outline-secondary" icon="fa-server" name="set_as_default_connection" type="object" style="font-weight: 600;"/>
+                            <button string="Check Status" class="btn btn-outline-secondary" icon="fa-rotate-right" name="check_status" type="object" style="font-weight: 600;"/>
+                        </div>
+                    </div>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Action -->
+    <record id="action_whatsapp_connection" model="ir.actions.act_window">
+        <field name="name">Whatsapp Connections</field>
+        <field name="target">current</field>
+        <field name="res_model">whatsapp.connection</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+    <!-- Search View -->
+    <record id="view_whatsapp_connection_filter" model="ir.ui.view">
+        <field name="name">whatsapp.connection.search</field>
+        <field name="model">whatsapp.connection</field>
+        <field name="arch" type="xml">
+            <search string="Search Whatsapp Connections">
+                <filter name="filter_archived" string="Archived" domain="[('active', '=', False)]"/>
+
+                <group string="Group By">
+                    <filter name="group_by_name" string="Name" domain="[]" context="{'group_by':'name'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+</odoo>

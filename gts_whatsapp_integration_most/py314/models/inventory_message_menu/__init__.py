@@ -1,0 +1,1 @@
+from . import inventory_message_menu
