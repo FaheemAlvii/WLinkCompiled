@@ -13,7 +13,7 @@ _ADDON_DIR = os.path.dirname(os.path.abspath(__file__))
 _PY_TAG = "py{}{}".format(sys.version_info.major, sys.version_info.minor)
 _COMPILED_DIR = os.path.join(_ADDON_DIR, _PY_TAG)
 
-_SUPPORTED_VERSIONS = ['3.10', '3.11', '3.12', '3.13', '3.14']
+_SUPPORTED_VERSIONS = ['3.8', '3.9', '3.10', '3.11', '3.12']
 
 if not os.path.isdir(_COMPILED_DIR):
     _current = "{}.{}".format(sys.version_info.major, sys.version_info.minor)
@@ -27,10 +27,10 @@ if not os.path.isdir(_COMPILED_DIR):
         )
     )
 
-# Insert the version-specific directory at the beginning of sys.path
-# so that Odoo's import machinery finds the compiled modules.
-if _COMPILED_DIR not in sys.path:
-    sys.path.insert(0, _COMPILED_DIR)
+# Extend this package's __path__ so that relative imports
+# (e.g. "from . import models") resolve to the compiled subtree.
+if _COMPILED_DIR not in __path__:
+    __path__.insert(0, _COMPILED_DIR)
 
 # Re-read the original __init__.py from the compiled subtree if it exists,
 # otherwise import all sub-packages.
