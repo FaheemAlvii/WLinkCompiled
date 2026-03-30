@@ -20,17 +20,17 @@
                             <field name="wa_template_name"/>
                         </group>
                         <group>
-                            <field name="partner_id" widget="many2one"/>
+                            <field name="partner_id"/>
                             <field name="message_id"/>
-                            <field name="whatsapp_instance_id" widget="many2one"/>
+                            <field name="whatsapp_instance_id"/>
                             <field name="whatsapp_message_provider"/>
                             <field name="model"/>
-                            <field name="res_id" widget="many2one_reference"/>
+                            <field name="res_id"/>
                         </group>
                     </group>
                     <group string="Attachments">
                         <field name="attachment_data" filename="message_body"
-                               invisible="attachment_data == False"/>
+                               attrs="{'invisible': [('attachment_data', '=', False)]}"/>
                         <field name="attachment_id" invisible="1"/>
                     </group>
                 </sheet>
@@ -42,19 +42,17 @@
         <field name="name">whatsapp.messages.tree</field>
         <field name="model">whatsapp.messages</field>
         <field name="arch" type="xml">
-            <list string="Whatsapp Messages" create="0" edit="0">
+            <tree string="Whatsapp Messages" create="0" edit="0">
                 <field name="time" readonly="1" string="Date"/>
                 <field name="senderName" string="From"/>
                 <field name="to"/>
                 <field name="message_body"/>
                 <field name="message_type"/>
-                <field name="whatsapp_instance_id" widget="many2one"/>
-                <field name="wa_template_id" invisible="1" widget="many2one"/>
+                <field name="whatsapp_instance_id"/>
+                <field name="wa_template_id" invisible="1"/>
                 <field name="wa_template_name"/>
-                <field name="res_id" invisible="1" widget="many2one_reference"/>
-                <field name="model" invisible="1"/>
                 <field name="message_id"/>
-            </list>
+            </tree>
         </field>
     </record>
 
@@ -74,7 +72,7 @@
 
     <record id="action_whatsapp_messages" model="ir.actions.act_window">
         <field name="name">Whatsapp Messages</field>
-        <field name="view_mode">list,form</field>
+        <field name="view_mode">tree,form</field>
         <field name="res_model">whatsapp.messages</field>
     </record>
 

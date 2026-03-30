@@ -21,13 +21,13 @@
     </record>
 
     <record id="gts_whatsapp_pos_view_pos_config_kanban" model="ir.ui.view">
-        <field name="name">gts_whatsapp_pos.pos.config.kanban.view</field>
+        <field name="name">pos.config.form</field>
         <field name="model">pos.config</field>
-        <field name="inherit_id" ref="point_of_sale.view_pos_config_kanban"></field>
+        <field name="inherit_id" ref="point_of_sale.view_pos_config_kanban"/>
         <field name="arch" type="xml">
-            <xpath expr="//div[contains(@class, 'row') and @style='min-width:200px']/div[@class='col-6']" position="inside">
+            <xpath expr="//kanban[@create='false' and @class='o_kanban_dashboard o_pos_kanban']/templates/t[@t-name='kanban-box']/div/div[@class='container o_kanban_card_manage_pane dropdown-menu']/div/div[@class='col-6 o_kanban_card_manage_section o_kanban_manage_new']" position="inside">
                 <div role="menuitem" class="o_kanban_card_manage_title">
-                    <strong>Whatsapp</strong>
+                    <span>Whatsapp</span>
                 </div>
 
                 <div role="menuitem">

@@ -44,7 +44,7 @@
                     </t>
                     <t t-if="show_all_options_button">
                         <span t-attf-class="o_whatsapp_message_link d-block text-center my-3">
-                            <i t-attf-class="fa fs-5  fa-list-ul"/> See all options
+                            <i t-attf-class="fa fs-5  fa-tree-ul"/> See all options
                         </span>
                     </t>
                 </div>

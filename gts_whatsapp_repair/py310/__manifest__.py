@@ -2,13 +2,12 @@
     'name': 'WhatsApp Messaging for Repair App',
     'summary': 'Send WhatsApp messages from Repair Orders with PDF attachments.',
     'description': """
-Adds WhatsApp messaging integration to the Odoo Repair module.
-Allows sending repair order details as PDF attachments via WhatsApp.
-Streamline customer communication and keep them updated on repair status in real time.
-""",
+    Adds WhatsApp messaging integration to the Repair module.
+    Allows sending messages with repair order PDF attachments via WhatsApp.
+    """,
     'author': 'GTS',
     'license': 'LGPL-3',
-    'version': '18.0.1.0',
+    'version': '16.0.1.0',
     'category': 'Repair',
     'images': ['static/description/repair_banner.jpg'],
     'depends': [

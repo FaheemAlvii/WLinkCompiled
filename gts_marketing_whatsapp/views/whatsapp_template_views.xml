@@ -1,4 +1,3 @@
-<?xml version="1.0" encoding="utf-8"?>
 <odoo>
     <record id="whatsapp_template_view_form" model="ir.ui.view">
         <field name="name">whatsapp.template.view.form</field>
@@ -7,119 +6,97 @@
             <form string="WhatsApp Template">
                 <header>
                     <field name="has_action" invisible="1"/>
-                    <button name="button_reset_to_draft"
-                            string="Reset to draft" type="object"
-                            invisible="status not in ['rejected', 'approved']"
+                    <button name="button_reset_to_draft" string="Reset to draft" type="object"
+                            attrs="{'invisible': [('status', 'not in', ('rejected', 'draft',))]}"
                             groups="gts_marketing_whatsapp.group_whatsapp_admin"/>
-                    <button name="button_submit_template" string="Submit for Approval"
-                            class="btn btn-primary" type="object"
-                            invisible="status not in ['rejected', 'draft']"
-                    />
-                    <button name="%(whatsapp_preview_action_from_template)d" string="Preview"
-                            type="action" target="new"
+                    <button name="button_submit_template" string="Submit for Approval" class="btn btn-primary"
+                            type="object" attrs="{'invisible': [('status', 'not in', ('rejected', 'draft',))]}"/>
+                    <button name="%(whatsapp_preview_action_from_template)d" string="Preview" type="action" target="new"
                             context="{'active_id': id, 'dialog_size': 'medium'}"/>
                     <field name="status" widget="statusbar" statusbar_visible="draft,pending,approved"/>
                 </header>
                 <sheet>
-                    <!--                    <div class="oe_button_box" name="button_box">-->
-                    <!--                        <button type="object" name="action_open_messages" class="oe_stat_button" icon="fa-whatsapp">-->
-                    <!--                            <field name="messages_count" string="Messages" widget="statinfo"/>-->
-                    <!--                        </button>-->
-                    <!--                    </div>-->
-                    <widget name="web_ribbon" title="Archived" bg_color="text-bg-danger" invisible="active"/>
+                    <!--                     <div class="oe_button_box" name="button_box"> -->
+                    <!--                         <button type="object" name="action_open_messages" class="oe_stat_button" icon="fa-whatsapp"> -->
+                    <!--                             <field name="messages_count" string="Messages" widget="statinfo"/> -->
+                    <!--                         </button> -->
+                    <!--                     </div> -->
+                    <!--                     <widget name="web_ribbon" title="Archived" bg_color="text-bg-danger" invisible="active"/> -->
                     <div class="oe_title">
                         <label for="name"/>
                         <h1>
-                            <field name="name" id="name" required="1"/>
+                            <field name="name" required="1"/>
                         </h1>
                     </div>
                     <group>
                         <group>
-                            <field name="active" invisible="1"/>
-                            <field name="wa_account_id"
-                                   readonly="status != 'draft'"/>
+                            <!--                             <field name="active" invisible="1"/> -->
+                            <field name="wa_account_id" attrs="{'readonly': [('status','!=','draft')]}"/>
                             <field name="model" invisible="1"/>
                             <field name="model_id" invisible="1"/>
-                            <field name="phone_field"
-                                   widget="DynamicModelFieldSelectorChar"
+                            <field name="phone_field" widget="DynamicModelFieldSelectorChar"
                                    options="{'model': 'model'}" invisible="1"/>
-                            <field name="template_type" invisible="1" readonly="status != 'draft'"/>
-                            <field name="allowed_user_ids"
-                                   widget="many2many_tags_avatar"
+                            <field name="template_type" invisible="1" attrs="{'invisible': [('status','!=','draft')]}"/>
+                            <field name="allowed_user_ids" widget="many2many_tags_avatar"
                                    placeholder="Users who can use this template.If empty then public." invisible="1"/>
-                            <field name="template_name"
-                                   readonly="not wa_template_uid or status != 'draft'"/>
-                            <field name="lang_code"
-                                   readonly="status != 'draft'"/>
-                            <field name="header_type"
-                                   readonly="status != 'draft'" required="1"/>
+                            <field name="template_name" attrs="{'readonly': [('status','!=','draft')]}"/>
+                            <field name="lang_code" attrs="{'readonly': [('status', '!=','draft')]}"/>
+                            <field name="header_type" attrs="{'readonly': [('status', '!=','draft')]}" required="1"/>
                         </group>
                         <group>
                             <field name="header_text"
-                                   invisible="header_type != 'text'" required="header_type == 'text'"
-                                   readonly="status != 'draft'"
+                                   attrs="{'readonly': [('status','!=','draft')], 'invisible': [('header_type','!=','text')],'required': [('header_type','=','text')]}"
                                    placeholder="e.g. template header........"/>
-                            <field name="header_attachment_ids"
-                                   widget="many2many_binary"
+                            <field name="header_attachment_ids" widget="many2many_binary"
                                    options="{'accepted_file_extensions': 'image/jpeg, image/png', 'number_of_files': 1}"
-                                   invisible="header_type != 'image'"/>
-                            <field name="header_attachment_ids"
-                                   widget="many2many_binary"
-                                   options="{
-                                    'accepted_file_extensions': 'text/plain, application/pdf, application/vnd.ms-powerpoint, application/msword, application/vnd.ms-excel,
-                                    application/vnd.openxmlformats-officedocument.wordprocessingml.document, application/vnd.openxmlformats-officedocument.presentationml.presentation,
-                                    application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-                                    'number_of_files': 1
-                                }"
-                                   invisible="header_type != 'document' or report_id != False"/>
-                            <field name="header_attachment_ids"
-                                   widget="many2many_binary"
+                                   attrs="{'invisible': [('header_type', '!=','image')]}"/>
+                            <field name="header_attachment_ids" widget="many2many_binary"
+                                   options="{ 'accepted_file_extensions': 'text/plain, application/pdf, application/vnd.ms-powerpoint, application/msword, application/vnd.ms-excel, application/vnd.openxmlformats-officedocument.wordprocessingml.document, application/vnd.openxmlformats-officedocument.presentationml.presentation, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', 'number_of_files': 1 }"
+                                   attrs="{'invisible':['|', ('header_type', '!=', 'document'), ('report_id', '!=', False)]}"/>
+                            <field name="header_attachment_ids" widget="many2many_binary"
                                    options="{'accepted_file_extensions': 'video/mp4', 'number_of_files': 1}"
-                                   invisible="header_type != 'video'"/>
-                            <field name="report_id"
-                                   invisible="header_type != 'document' or header_attachment_ids"/>
-                            <field name="footer_text"
-                                   readonly="status != 'draft'"/>
-                            <field name="quality" widget="priority"
-                                   invisible="quality == 'none'" readonly="1"/>
+                                   attrs="{'invisible': [('header_type', '!=','video')]}"/>
+                            <field name="report_id" attrs="{'invisible': [('header_type', '!=','document')]}"/>
+                            <field name="footer_text" attrs="{'readonly': [('status', '!=','draft')]}"/>
+                            <field name="quality" widget="priority" attrs="{'invisible': [('quality', '=','none')]}"/>
                             <field name="wa_template_uid" invisible="1"/>
                         </group>
                     </group>
                     <notebook>
                         <page id="body" name="Body">
                             <field name="body" placeholder="e.g. template body..."
-                                   readonly="status != 'draft'" required="1"/>
+                                   attrs="{'readonly': [('status','!=','draft')]}" required="1"/>
                         </page>
                     </notebook>
                 </sheet>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids" groups="base.group_user"/>
+                    <field name="message_ids"/>
+                </div>
             </form>
         </field>
     </record>
-
     <record id="whatsapp_template_view_tree" model="ir.ui.view">
         <field name="name">whatsapp.template.view.tree</field>
         <field name="model">whatsapp.template</field>
         <field name="arch" type="xml">
-            <list string="WhatsApp Template">
+            <tree string="WhatsApp Template">
                 <field name="sequence" widget="handle"/>
                 <field name="name"/>
                 <field name="model_id"/>
-                <!--                <field name="wa_account_id"-->
-                <!--                       groups="gts_marketing_whatsapp.group_whatsapp_admin"-->
-                <!--                       optional="hidden"/>-->
+                <!--                 <field name="wa_account_id" -->
+                <!--                        groups="gts_marketing_whatsapp.group_whatsapp_admin" -->
+                <!--                        optional="hidden"/> -->
                 <field name="template_name" optional="hidden"/>
                 <field name="header_type" optional="hidden"/>
                 <field name="create_uid" widget="many2one_avatar"/>
                 <field name="create_date" optional="hidden"/>
                 <field name="quality" widget="priority" optional="hidden" readonly="1"/>
-                <field name="status"
-                       decoration-success="status == 'approved'"
-                       decoration-danger="status == 'rejected'"
+                <field name="status" decoration-success="status == 'approved'" decoration-danger="status == 'rejected'"
                        widget="badge"/>
-            </list>
+            </tree>
         </field>
     </record>
-
     <record id="whatsapp_template_view_kanban" model="ir.ui.view">
         <field name="name">whatsapp.template.view.kanban</field>
         <field name="model">whatsapp.template</field>
@@ -141,8 +118,7 @@
                                         </div>
                                     </div>
                                     <strong>
-                                        <field name="status"
-                                               widget="label_selection"
+                                        <field name="status" widget="label_selection"
                                                options="{'classes': {'approved': 'success', 'rejected': 'danger'}}"/>
                                     </strong>
                                 </div>
@@ -150,11 +126,11 @@
                                     <div class="oe_kanban_bottom_left">
                                         <field name="quality" widget="priority" readonly="1"/>
                                         <field name="create_date" widget="date"/>
-                                        <!--                                        <div>-->
-                                        <!--                                            <i class="fa fa-whatsapp me-1" title="Messages Count"-->
-                                        <!--                                               aria-label="Messages Count"/>-->
-                                        <!--                                            <field name="messages_count"/>-->
-                                        <!--                                        </div>-->
+                                        <!--                                         <div> -->
+                                        <!--                                             <i class="fa fa-whatsapp me-1" title="Messages Count" -->
+                                        <!--                                                aria-label="Messages Count"/> -->
+                                        <!-- &lt;!&ndash;                                            <field name="messages_count"/>&ndash;&gt; -->
+                                        <!--                                         </div> -->
                                     </div>
                                     <div class="oe_kanban_bottom_right" t-if="!selection_mode">
                                         <field name="allowed_user_ids" widget="many2many_avatar_user"/>
@@ -167,7 +143,6 @@
             </kanban>
         </field>
     </record>
-
     <record id="whatsapp_template_view_search" model="ir.ui.view">
         <field name="name">whatsapp.template.view.search</field>
         <field name="model">whatsapp.template</field>
@@ -179,7 +154,7 @@
                 <separator/>
                 <filter string="My Templates" name="my" domain="[('create_uid', '=', uid)]"/>
                 <separator/>
-                <filter string="Archived" name="filter_archived" domain="[('active', '=', False)]"/>
+                <!--                 <filter string="Archived" name="filter_archived" domain="[('active', '=', False)]"/> -->
                 <group expand="0" string="Group By">
                     <filter string="Model" name="model_id" domain="[]" context="{'group_by': 'model_id'}"/>
                     <filter string="Status" name="status" domain="[]" context="{'group_by': 'status'}"/>
@@ -187,16 +162,13 @@
             </search>
         </field>
     </record>
-
     <record id="whatsapp_template_action_id" model="ir.actions.act_window">
         <field name="name">WhatsApp Template</field>
         <field name="type">ir.actions.act_window</field>
         <field name="res_model">whatsapp.template</field>
-        <field name="view_mode">list,kanban,form</field>
+        <field name="view_mode">tree,kanban,form</field>
         <field name="help" type="html">
-            <p class="o_view_nocontent_empty_folder">
-                Create WhatsApp Templates.
-            </p>
+            <p class="o_view_nocontent_empty_folder">Create WhatsApp Templates.</p>
         </field>
     </record>
 </odoo>

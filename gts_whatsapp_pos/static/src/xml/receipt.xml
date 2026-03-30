@@ -1,64 +1,48 @@
 <?xml version="1.0" encoding="utf-8"?>
 <templates id="template" xml:space="preserve">
     <t t-name="gts_whatsapp_pos.ReceiptScreen" t-inherit="point_of_sale.ReceiptScreen" t-inherit-mode="extension">
-        <xpath expr="//div[@class='receipt-options d-flex flex-column gap-2']" position="inside">
-            <!-- Show to all users for now -->
-            <div class="mt-4 send-whatsapp">
-                <div class="input-whatsapp">
-                    <input type="tel" placeholder="Whatsapp: Receipt" t-model="orderUiState.inputWhatsapp"
-                           t-on-input="onInputWhatsapp"
-                           t-att-class="{ highlight: orderUiState.whatsappButtonDisabled }"/>
-                    <button class="send" t-on-click="onSendWhatsapp"
-                            t-att-class="{ highlight: !orderUiState.whatsappButtonDisabled }"
-                            t-att-disabled="orderUiState.isReceiptSending"
-                            type="submit">
-                        <!-- Conditional display for spinning icon or whatsapp icon -->
-                        <t t-if="orderUiState.isReceiptSending">
-                            <i class="fa fa-spinner fa-spin" aria-hidden="true"/>
-                            Sending...
-                        </t>
-                        <t t-else="">
-                            <i class="fa fa-whatsapp" aria-hidden="true"/>
-                            Send Receipt
-                        </t>
+        <xpath expr="//form[hasclass('send-email')]" position="after">
+
+            <!-- Receipt Sending Form -->
+            <form class="mt-1 send-whatsapp">
+                <div class="input-whatsapp" t-on-submit.prevent="onSendWhatsapp">
+                    <input type="tel" class="input-email" placeholder="Whatsapp: Receipt"
+                           t-model="state.inputWhatsapp" t-on-input="onInputWhatsapp"/>
+                    <button class="send highlight" t-on-click="onSendWhatsapp"
+                            t-att-disabled="state.isSending || state.whatsappButtonDisabled" type="submit">
+                        <i class="fa"
+                           t-att-class="state.isSending ? 'fa-fw fa-spin fa-circle-o-notch' : 'fa-solid fa-whatsapp'"
+                           aria-hidden="true"/>
+                        Send Receipt
                     </button>
                 </div>
-            </div>
+            </form>
 
-            <div class="mt-4 send-whatsapp" t-if="currentOrder.is_to_invoice()">
-                <div class="input-whatsapp">
-                    <input type="tel" placeholder="Whatsapp: Invoice" t-model="orderUiState.inputWhatsapp"
-                           t-on-input="onInputWhatsapp"
-                           t-att-class="{ highlight: orderUiState.whatsappButtonDisabled }"/>
-                    <button class="send" t-on-click="onSendInvoiceWhatsapp"
-                            t-att-class="{ highlight: !orderUiState.whatsappButtonDisabled }"
-                            t-att-disabled="orderUiState.isInvoiceSending"
-                            type="submit">
-                        <!-- Conditional display for spinning icon or whatsapp icon -->
-                        <t t-if="orderUiState.isInvoiceSending">
-                            <i class="fa fa-spinner fa-spin" aria-hidden="true"/>
-                            Sending...
-                        </t>
-                        <t t-else="">
-                            <i class="fa fa-whatsapp" aria-hidden="true"/>
-                            Send Invoice
-                        </t>
+            <!-- Invoice Sending Form -->
+            <form class="mt-1 send-whatsapp" t-if="currentOrder.is_to_invoice()">
+                <div class="input-whatsapp" t-on-submit.prevent="onSendInvoiceWhatsapp">
+                    <input type="tel" class="input-email" placeholder="Whatsapp: Invoice"
+                           t-model="state.inputWhatsapp" t-on-input="onInputWhatsapp"/>
+                    <button class="send highlight" t-on-click="onSendInvoiceWhatsapp"
+                            t-att-disabled="state.isInvoiceSending || state.whatsappButtonDisabled" type="submit">
+                        <i class="fa"
+                           t-att-class="state.isInvoiceSending ? 'fa-fw fa-spin fa-circle-o-notch' : 'fa-solid fa-whatsapp'"
+                           aria-hidden="true"/>
+                        Send Invoice
                     </button>
                 </div>
+            </form>
+
+            <!-- Message Input -->
+            <div>
+                <p style="margin: 7px; font-size: 12px;">Enter your message.</p>
+            </div>
+            <div>
+                <textarea style="box-shadow: 0px 0px 0px 1px gainsboro inset !important; border-radius: 0 !important;"
+                          id="input_whatsapp" rows="2" cols="100" placeholder="Message"
+                          t-model="state.inputMessage" t-ref="input" name="note"></textarea>
             </div>
 
-            <div>
-                <p style="margin: 7px; font-size: 17px;">Enter your message.</p>
-            </div>
-
-            <div>
-                <textarea
-                        style="flex: 1; padding-left: 0.5rem; padding-top: 0.4rem; border-radius: 0.25rem !important; border: solid 1px rgb(206, 212, 218); color: #495057; transition: border-color 0.15s ease-in-out;"
-                        id="input_whatsapp" rows="2" cols="100" placeholder="Message"
-                        t-model="orderUiState.inputMessage" t-ref="input" name="note"
-                        onfocus="this.style.borderColor='#71639e'"
-                        onblur="this.style.borderColor='rgb(206, 212, 218)'"></textarea>
-            </div>
         </xpath>
     </t>
 </templates>

@@ -2,17 +2,17 @@
 
 {
     'name': 'Odoo WhatsApp Integration',
-    'version': '18.0.1.0',
+    'version': '16.0.1.0',
     'category': 'Marketing',
     'summary': 'Full WhatsApp messaging integration for Odoo with marketing and scheduling features.',
     'description': """
-This module integrates Odoo with WhatsApp to enable messaging services, including
-message templates, campaign management, scheduling, and advanced marketing features.
-""",
+    This module integrates Odoo with WhatsApp to enable messaging services, including
+    message templates, campaign management, scheduling, and advanced marketing features.
+    """,
     'author': 'GTS',
     'license': 'LGPL-3',
     'images': ['static/description/maketing_banner.jpg'],
-    'depends': ['mail', 'contacts', 'phone_validation', 'gts_whatsapp'],
+    'depends': ['mail', 'contacts', 'phone_validation','gts_whatsapp'],
     'data': [
         'data/whatsapp_templates_preview.xml',
         'security/res_groups.xml',
@@ -33,9 +33,10 @@ message templates, campaign management, scheduling, and advanced marketing featu
     'assets': {
         'web.assets_backend': [
             'gts_marketing_whatsapp/static/src/**/*',
+            # Don't include dark mode files in light mode
             ('remove', 'gts_marketing_whatsapp/static/src/**/*.dark.scss'),
         ],
-        'web.assets_web_dark': [
+        "web.assets_web_dark": [
             'gts_marketing_whatsapp/static/src/**/*.dark.scss',
         ],
     },

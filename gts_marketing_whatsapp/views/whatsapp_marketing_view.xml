@@ -6,22 +6,22 @@
         <field name="arch" type="xml">
             <form string="Whatsapp Message">
                 <header>
-                    <button name="action_send_message" type="object" invisible="state in ('in_queue', 'done')"
-                            class="oe_highlight" string="Send"
+                    <button name="action_send_message" type="object"
+                            attrs="{'invisible': [('state', 'in',['in_queue', 'done',])]}" class="oe_highlight"
+                            string="Send"
                             confirm="This will send the message to all recipients. Do you still want to proceed ?"/>
-                    <button name="action_schedule" type="object" invisible="state in ('in_queue', 'done')"
-                            class="btn-secondary"
+                    <button name="action_schedule" type="object"
+                            attrs="{'invisible': [('state', 'in',['in_queue', 'done',])]}" class="btn-secondary"
                             string="Schedule"/>
-                    <button name="action_cancel" type="object" invisible="state not in ('in_queue')"
-                            class="btn-secondary"
-                            string="Cancel"/>
-                    <button name="action_reset_to_draft" type="object" invisible="state in ('draft', 'in_queue')"
-                            class="btn-secondary"
+                    <button name="action_cancel" type="object" attrs="{'invisible': [('state', 'in',['in_queue'])]}"
+                            class="btn-secondary" string="Cancel"/>
+                    <button name="action_reset_to_draft" type="object"
+                            attrs="{'invisible': [('state', 'in',['in_queue', 'draft',])]}" class="btn-secondary"
                             string="Reset To Draft"/>
                     <field name="state" readonly="1" widget="statusbar"/>
                 </header>
-                <div class="alert alert-info text-center" role="alert" invisible="state != 'in_queue'">
-                    <div invisible="state != 'in_queue'">
+                <div class="alert alert-info text-center" role="alert" attrs="{'invisible': [('state', 'not in',['in_queue'])]}">
+                    <div attrs="{'invisible': [('state', 'not in',['in_queue'])]}">
                         <strong>
                             <span name="next_departure_text">This message is scheduled for</span>
                             <field name="next_departure" class="oe_inline"/>.
@@ -37,7 +37,9 @@
                             <span style="margin-right: 10px;">
                                 <label for="whatsapp_templates_id" string="Templates"/>
                             </span>
-                            <field name="whatsapp_templates_id" readonly="state != 'draft'" required="1" id="whatsapp_templates_id"/>
+                            <field name="whatsapp_templates_id" attrs="{'readonly': [('state', 'not in',['draft'])]}"
+                                   required="1"/>
+
                         </h3>
                     </div>
                     <group>
@@ -45,20 +47,20 @@
                             <field name="campaign_list_id" widget="many2one"/>
                         </group>
                         <group>
-                            <field name="recipient_ids" widget="many2many" readonly="1"/>
+                            <field name="recipient_ids"  widget="many2many_tags" readonly="1"/>
                         </group>
                     </group>
-                    <group>
+                    <group >
                         <label for="whatsapp_model_id" string="Recipients"/>
-                        <div name="whatsapp_model_id_container" >
+                        <div name="whatsapp_model_id_container">
                             <div class="row">
                                 <div class="col-xs-12 col-md-3">
-                                    <field name="whatsapp_model_id" invisible="campaign_list_id != False" readonly="state != 'draft'" widget="selection" id="whatsapp_model_id"/>
+                                    <field name="whatsapp_model_id" attrs="{'readonly': [('campaign_list_id', '!=',False)]}" widget="selection"/>
                                 </div>
                             </div>
                             <field name="whatsapp_model_name" invisible="1"/>
                             <field name="whatsapp_model_real" invisible="1"/>
-                            <field name="whatsapp_domain" readonly="state != 'draft'" widget="domain"
+                            <field name="whatsapp_domain" attrs="{'readonly': [('state', 'not in',['draft'])]}" widget="domain"
                                    options="{'model': 'whatsapp_model_real'}"
                             />
                         </div>
@@ -66,18 +68,18 @@
                     </group>
                     <group>
                         <group>
-                            <field name="whatsapp_connection" readonly="state != 'draft'" required="1"/>
+                            <field name="whatsapp_connection" attrs="{'readonly': [('state', 'not in',['draft'])]}" required="1"/>
                             <field name="whatsapp_provider" invisible="1"/>
                             <field name="user_id" invisible="1"/>
                         </group>
                     </group>
                     <notebook>
-                        <page readonly="state != 'draft'" string="Message Body" name="message_body">
+                        <page attrs="{'readonly': [('state', 'not in',['draft'])]}" string="Message Body" name="message_body">
                             <div class="alert alert-info">
                                 <strong>Note:</strong>
                                 Your WhatsApp Message uses {{object.field_name}} for dynamic variables.
                             </div>
-                            <field name="message_body" readonly="state != 'draft'"
+                            <field name="message_body" attrs="{'readonly': [('state', 'not in',['draft'])]}"
                                    help="Use {{object.field_name}} for dynamic variables."/>
                         </page>
 
@@ -91,19 +93,19 @@
         <field name="name">whatsapp.marketing.tree</field>
         <field name="model">whatsapp.marketing</field>
         <field name="arch" type="xml">
-            <list string="Whatsapp Message">
+            <tree string="Whatsapp Message">
                 <field name="whatsapp_templates_id"/>
                 <field name="whatsapp_model_id"/>
                 <field name="user_id"/>
                 <field name="state"/>
-            </list>
+            </tree>
         </field>
     </record>
 
 
     <record model="ir.actions.act_window" id="action_whatsapp_message">
         <field name="name">Mass Messages</field>
-        <field name="view_mode">list,form</field>
+        <field name="view_mode">tree,form</field>
         <field name="res_model">whatsapp.marketing</field>
     </record>
 

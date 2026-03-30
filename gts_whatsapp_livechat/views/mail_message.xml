@@ -1,47 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
 
-    <!-- Partner Form View - WhatsApp Information -->
-    <record id="view_partner_form_whatsapp_livechat" model="ir.ui.view">
-        <field name="name">res.partner.whatsapp.form.view</field>
-        <field name="model">res.partner</field>
-        <field name="inherit_id" ref="base.view_partner_form"/>
-        <field name="arch" type="xml">
-            <xpath expr="//notebook/page[@name='internal_notes']" position="after">
-                <page  string="WhatsApp" invisible="is_whatsapp_contact == False" name="whatsapp_info" >
-                    <group>
-                        <group string="WhatsApp Information">
-                            <field name="is_whatsapp_contact"/>
-                            <field name="whatsapp_status" invisible="1"/>
-                            <field name="whatsapp_last_seen" invisible="1"/>
-                            <field name="whatsapp_username"/>
-                        </group>
-                        <group string="Profile">
-                            <field name="whatsapp_profile_picture" widget="image" class="oe_avatar" invisible="1"/>
-                            <field name="whatsapp_about" nolabel="1" invisible="1"/>
-                        </group>
-                    </group>
-                </page>
-            </xpath>
-        </field>
-    </record>
-
-    <!-- Partner Tree View - WhatsApp Status -->
-    <record id="view_partner_tree_whatsapp_livechat" model="ir.ui.view">
-        <field name="name">res.partner.whatsapp.tree.view</field>
-        <field name="model">res.partner</field>
-        <field name="inherit_id" ref="base.view_partner_tree"/>
-        <field name="arch" type="xml">
-            <field name="phone" position="after">
-                <field name="is_whatsapp_contact" optional="hide"/>
-            </field>
-        </field>
-    </record>
     
     <record id="view_channel_tree_whatsapp_livechat" model="ir.ui.view">
-        <field name="name">discuss.channel.whatsapp.form.view</field>
-        <field name="model">discuss.channel</field>
-        <field name="inherit_id" ref="mail.discuss_channel_view_tree"/>
+        <field name="name">mail.channel.whatsapp.form.view</field>
+        <field name="model">mail.channel</field>
+        <field name="inherit_id" ref="mail.mail_channel_view_tree"/>
         <field name="arch" type="xml">
         	<field name="name" position="after">
         		<field name="senderkeyhash"/>
@@ -53,9 +17,9 @@
     </record>
     
     <record id="view_channel_form_whatsapp_livechat" model="ir.ui.view">
-        <field name="name">discuss.channel.whatsapp.form.view</field>
-        <field name="model">discuss.channel</field>
-        <field name="inherit_id" ref="mail.discuss_channel_view_form"/>
+        <field name="name">mail.channel.whatsapp.form.view</field>
+        <field name="model">mail.channel</field>
+        <field name="inherit_id" ref="mail.mail_channel_view_form"/>
         <field name="arch" type="xml">
         	<field name="group_ids" position="after">
         		<field name="senderkeyhash"/>
@@ -77,4 +41,6 @@
         	</field>
         </field>
     </record>
+    
+
 </odoo>

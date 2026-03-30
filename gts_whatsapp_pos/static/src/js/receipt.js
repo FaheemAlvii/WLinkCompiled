@@ -1,101 +1,169 @@
-/** @odoo-module **/
+odoo.define('gts_whatsapp_pos.ReceiptScreen', function(require) {
+    "use strict";
 
-import { ReceiptScreen } from "@point_of_sale/app/screens/receipt_screen/receipt_screen";
-import { patch } from "@web/core/utils/patch";
-import { useState } from "@odoo/owl";
-import { useService } from "@web/core/utils/hooks"; // Import useService for Odoo 18
-import { _t } from "@web/core/l10n/translation"; // Import translation service
+    const { useState } = require('@odoo/owl');
+    const { Printer } = require('point_of_sale.Printer');
+    const ReceiptScreen = require('point_of_sale.ReceiptScreen');
+    const Registries = require('point_of_sale.Registries');
 
-patch(ReceiptScreen.prototype, {
-    setup() {
-        super.setup(...arguments);
-        // Inject the notification service for displaying success/error messages
-        this.notification = useService("notification");
+    const WhatsappReceiptScreen = (ReceiptScreen) =>
+        class extends ReceiptScreen {
+            setup() {
+                super.setup();
 
-        const order = this.currentOrder;
-        const partner = order ? order.get_partner() : null;
-        const orderName = order ? order.name : '';
+                this.state = useState({
+                    inputWhatsapp: '',
+                    inputMessage: '',
+                    isSending: false,
+                    isInvoiceSending: false,
+                    whatsappButtonDisabled: false,
+                    invoiceButtonDisabled: false,
+                });
 
-        let number = "";
-        if (partner) {
-            number = partner.phone || partner.mobile || "";
-        }
+                const partner = this.currentOrder.get_partner();
+                const orderName = this.currentOrder.get_name();
 
-        this.orderUiState = useState({
-            inputWhatsapp: number,
-            inputMessage: `Hello${partner ? ' ' + partner.name : ''}, here is your ${order?.is_to_invoice() ? 'invoice' : 'receipt'} for order: ${orderName}.`,
-            isReceiptSending: false,
-            isInvoiceSending: false,
-            whatsappButtonDisabled: false,
-            currentPartner: partner,
-            user: this.env.pos?.user || null,
-        });
-    },
+                let number = "";
+                if (partner) {
+                    console.log(`Partner: ${partner.name}, Whatsapp number: ${partner.mobile}`);
+                    number = partner.phone || partner.mobile || "";
+                } else {
+                    console.log(`Partner is null!`);
+                }
 
-    is_valid_mobile() {
-        const value = this.orderUiState.inputWhatsapp;
-        return value && value.replace(/\D/g, "").length >= 8;
-    },
-
-    onInputWhatsapp(ev) {
-        this.orderUiState.inputWhatsapp = ev.target.value;
-        this.orderUiState.whatsappButtonDisabled = false;
-    },
-
-    async onSendWhatsapp() {
-        if (this.orderUiState.isReceiptSending) return;
-        this.orderUiState.isReceiptSending = true;
-
-        try {
-            const ticketImage = await this.generateTicketImage(); // base64 image
-            await this.pos.data.call("pos.order", "whatsapp_template_message", [
-                this.orderUiState.inputWhatsapp,
-                this.orderUiState.inputMessage,
-                ticketImage,
-            ]);
-            // Replaced alert with the Odoo notification service for a success message
-            this.notification.add(_t("Receipt sent successfully via WhatsApp."), { type: 'success' });
-        } catch (error) {
-            console.error("Error sending receipt via WhatsApp:", error);
-            // Replaced alert with the Odoo notification service for an error message
-            this.notification.add(_t("Failed to send receipt."), { type: 'danger' });
-        }
-
-        this.orderUiState.isReceiptSending = false;
-    },
-
-    async onSendInvoiceWhatsapp() {
-        if (this.orderUiState.isInvoiceSending || !this.currentOrder.is_to_invoice()) return;
-        this.orderUiState.isInvoiceSending = true;
-
-        try {
-            const order = this.currentOrder;
-            const orderId = order?.id;
-            const partner = order.get_partner();
-
-            if (!orderId) throw new Error("Order ID not found or not synced.");
-            if (!order.is_to_invoice()) throw new Error("Order is not marked for invoicing.");
-            if (!partner) throw new Error("Please select a customer before sending invoice.");
-
-            const result = await this.pos.data.call("pos.order", "whatsapp_template_message_with_invoice", [
-                orderId,
-                this.orderUiState.inputWhatsapp,
-                this.orderUiState.inputMessage,
-            ]);
-
-            if (result && result.type === 'ir.actions.act_window') {
-                await this.pos.env.services.action.doAction(result);
-                // The action might open a wizard, so we don't show a direct success message here.
-            } else {
-                // Replaced alert with the Odoo notification service for a success message
-                this.notification.add(_t("Invoice sent successfully via WhatsApp."), { type: 'success' });
+                this.state.inputWhatsapp = number;
+                this.state.inputMessage = `Hello, Here is your receipt for the following order id: ${orderName}.`;
+                this.state.whatsappButtonDisabled = !this.is_valid_mobile();
+                this.state.invoiceButtonDisabled = !this.currentOrder.backendId;
             }
-        } catch (error) {
-            console.error("Error invoice sent via WhatsApp!", error);
-            // Replaced alert with the Odoo notification service for an error message
-            this.notification.add(error.message || _t("Failed to send invoice."), { type: 'danger' });
-        }
 
-        this.orderUiState.isInvoiceSending = false;
-    },
+            is_valid_mobile() {
+                const value = this.state.inputWhatsapp;
+                if (value) {
+                    const valueLen = value.replace(/[^0-9]/g, "").length;
+                    return valueLen > 8 && valueLen < 15;
+                }
+                return false;
+            }
+
+            onInputWhatsapp(ev) {
+                this.state.inputWhatsapp = ev.target.value;
+                this.state.whatsappButtonDisabled = !this.is_valid_mobile();
+            }
+
+            // === Send Receipt ===
+            async onSendWhatsapp() {
+                if (this.state.isSending || !this.is_valid_mobile()) return;
+
+                this.state.isSending = true;
+                try {
+                    await this._sendWhatsappToCustomer();
+                    this.showPopup('ConfirmPopup', {
+                        title: 'Sent!',
+                        body: 'The receipt has been successfully sent via WhatsApp.',
+                    });
+                } catch (error) {
+                    console.error('Failed to send receipt:', error);
+                    const errorMessage = error.message || 'Failed to send receipt via WhatsApp. Please check the Odoo server logs for more details.';
+                    this.showPopup('ErrorPopup', {
+                        title: 'Sending Failed',
+                        body: errorMessage,
+                    });
+                } finally {
+                    this.state.isSending = false;
+                }
+            }
+
+            async _sendWhatsappToCustomer() {
+                const number = this.state.inputWhatsapp;
+                const message = this.state.inputMessage;
+                const receiptString = this.orderReceipt.el.innerHTML;
+                const printer = new Printer(null, this.env.pos);
+                const ticketImage = await printer.htmlToImg(receiptString);
+
+                try {
+                    // This is the RPC call to the server-side method.
+                    // The issue is in the Python code, not this JS call.
+                    await this.rpc({
+                        model: 'pos.order',
+                        method: 'whatsapp_template_message',
+                        args: [number, message, ticketImage],
+                    });
+                } catch (error) {
+                    throw error;
+                }
+            }
+
+            // === Send Invoice ===
+            async onSendInvoiceWhatsapp() {
+                if (this.state.isInvoiceSending) return;
+
+                if (!this.is_valid_mobile()) {
+                    this.showPopup('ErrorPopup', {
+                        title: 'Validation Error',
+                        body: 'Please enter a valid mobile number to send the invoice.',
+                    });
+                    return;
+                }
+
+                this.state.isInvoiceSending = true;
+                try {
+                    await this._sendInvoiceToCustomer();
+                    this.showPopup('ConfirmPopup', {
+                        title: 'Sent!',
+                        body: 'The invoice has been successfully sent via WhatsApp.',
+                    });
+                } catch (error) {
+                    console.error('Failed to send invoice:', error);
+                    const errorMessage = error.message || 'Failed to send invoice via WhatsApp. Please check the Odoo server logs for more details.';
+                    this.showPopup('ErrorPopup', {
+                        title: 'Invoice Sending Failed',
+                        body: errorMessage,
+                    });
+                } finally {
+                    this.state.isInvoiceSending = false;
+                }
+            }
+
+            async _sendInvoiceToCustomer() {
+                const order = this.currentOrder;
+                const partner = order.get_partner();
+
+                if (!partner) {
+                    throw new Error("Please select a customer before sending an invoice.");
+                }
+
+                if (!order.is_to_invoice()) {
+                    throw new Error("Order is not marked for invoicing.");
+                }
+
+                const orderName = order.get_name();
+                const order_server_id = this.env.pos.validated_orders_name_server_id_map[orderName];
+
+                console.log("Order Name:", orderName);
+                console.log("Order Server ID:", order_server_id);
+
+                if (!order_server_id) {
+                    throw new Error("This order has not been synced to the backend. Please ensure the POS is online and try again.");
+                }
+
+                const number = this.state.inputWhatsapp;
+                const message = this.state.inputMessage.replace('receipt', 'invoice');
+
+                try {
+                    // This RPC call triggers the problematic Python method.
+                    // The fix must be in the Python function 'whatsapp_send_invoice'.
+                    await this.rpc({
+                        model: 'pos.order',
+                        method: 'whatsapp_send_invoice',
+                        args: [number, message, order_server_id],
+                    });
+                } catch (error) {
+                    throw error;
+                }
+            }
+        };
+
+    Registries.Component.extend(ReceiptScreen, WhatsappReceiptScreen);
+    return ReceiptScreen;
 });

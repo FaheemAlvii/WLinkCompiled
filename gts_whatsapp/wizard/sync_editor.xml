@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <odoo>
-    <record id="gts_whatsapp_contact_list" model="ir.ui.view">
+    <record id="gts_whatsapp_contact_tree" model="ir.ui.view">
         <field name="name">gts_whatsapp.contact.view</field>
         <field name="model">gts_whatsapp.contact</field>
         <field name="arch" type="xml">
-            <list multi_edit="1" editable="top">
+            <tree multi_edit="1" editable="top">
                 <field name="username" readonly="1"/>
                 <field name="name" readonly="1"/>
                 <field name="phone" readonly="1"/>
                 <field name="keep"/>
-            </list>
+            </tree>
         </field>
     </record>
 

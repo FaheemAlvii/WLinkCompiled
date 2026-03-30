@@ -13,7 +13,7 @@ _ADDON_DIR = os.path.dirname(os.path.abspath(__file__))
 _PY_TAG = "py{}{}".format(sys.version_info.major, sys.version_info.minor)
 _COMPILED_DIR = os.path.join(_ADDON_DIR, _PY_TAG)
 
-_SUPPORTED_VERSIONS = ['3.9', '3.10', '3.11', '3.12', '3.13', '3.14']
+_SUPPORTED_VERSIONS = ['3.10', '3.11', '3.12', '3.13', '3.14']
 
 if not os.path.isdir(_COMPILED_DIR):
     _current = "{}.{}".format(sys.version_info.major, sys.version_info.minor)

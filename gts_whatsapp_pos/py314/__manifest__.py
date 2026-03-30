@@ -4,7 +4,7 @@
     'description': """Integrate WhatsApp with Odoo POS to send receipts and invoices to customers directly from the POS interface. Enhance post-sale communication with real-time WhatsApp messaging.""",
     'author': 'GTS',
     'license': 'LGPL-3',
-    'version': '18.0.1.0',
+    'version': '16.0.1.0',
     'images': ['static/description/pos_banner.jpg'],
     'depends': ['gts_whatsapp', 'gts_contacts_whatsapp', 'point_of_sale', 'account'],
     'data': [
@@ -12,7 +12,7 @@
         'wizard/select_connection.xml'
     ],
     'assets': {
-        'point_of_sale._assets_pos': [
+        'point_of_sale.assets': [
             'gts_whatsapp_pos/static/src/scss/style.scss',
             'gts_whatsapp_pos/static/src/xml/receipt.xml',
             'gts_whatsapp_pos/static/src/js/receipt.js',

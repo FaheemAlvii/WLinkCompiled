@@ -2,7 +2,7 @@
 
 {
     'name': 'WhatsApp Live Chat (Discuss Integration)',
-    'version': '18.0.0.1.0',
+    'version': '16.0.0.1.0',
     'license': 'OPL-1',
     'author': "GTS",
     'summary': 'Chat with customers on WhatsApp directly from Odoo Discuss in real time.',
@@ -11,17 +11,23 @@
     'sequence': 1,
     'images': ['static/description/livechat_banner.jpg'],
     'depends': [
-        'im_livechat',
+        'im_livechat', 
         'mail',
+        'base',
         'gts_whatsapp',
     ],
     'data': [
+        'data/whatsapp_data.xml',
         'views/mail_message.xml',
     ],
     'external_dependencies': {'python': ['phonenumbers']},
+    'demo': [],
+    'test': [],
+    'css': [],
+    'js': [],
+    'price': 0,
+    'currency': 'EUR',
     'installable': True,
     'application': False,
     'auto_install': False,
-    'price': 0,
-    'currency': 'EUR',
 }

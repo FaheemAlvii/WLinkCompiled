@@ -37,7 +37,7 @@ class Config:
             db['base_url'] = db.get('base_url')
 
             if db.get('base_url') is None:
-                db['base_url'] = 'https://whatapi.geektechsol.com'
+                db['base_url'] = 'https://wlink.geektechsol.com'
 
             if db.get('templates_text') is None:
                 db['templates_text'] = {

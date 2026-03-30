@@ -1,57 +1,19 @@
 <odoo>
-    <record id="action_x_project_task_notification_whatsapp" model="ir.actions.server">
-        <field name="name">Task Notification by Whatsapp</field>
-        <field name="model_id" ref="project.model_project_task"/>
-        <field name="state">code</field>
-        <field name="code"><![CDATA[
-for task in records:
-    task.send_whatsapp_automatic()
-    ]]></field>
-    </record>
-
-    <record id="automation_rule_x_project_task_notification_whatsapp" model="base.automation">
+    <record id="project_tasks_status_send" model="base.automation">
         <field name="name">Task Notification by Whatsapp</field>
         <field name="model_id" ref="project.model_project_task"/>
         <field name="trigger">on_write</field>
         <field name="trigger_field_ids" eval="[(4, ref('project.field_project_task__stage_id'))]"/>
-        <field name="action_server_ids" eval="[(4, ref('action_x_project_task_notification_whatsapp'))]"/>
+        <field name="active" eval="True"/>
+        <field name="state">code</field>
+        <field name="code">record.send_whatsapp_automatic()</field>
     </record>
     <record id="project_tasks_update_status" model="mail.template">
         <field name="name">Tasks: Tasks Update</field>
         <field name="subject">Tasks Update</field>
         <field name="model_id" ref="project.model_project_task"/>
-        <field name="body_html" type="html">
-            <div style="font-family: 'Lucica Grande', Ubuntu, Arial, Verdana, sans-serif; font-size: 12px;">
-                <p>Hello _PARTNER_</p>
-                Your task *_NAME_* is updated into stage _STAGE_.
-                <br/>
-                Kindly refer below link for task detail.
-            </div>
+        <field name="body_html">
+            <![CDATA[ <div style="font-family: 'Lucica Grande', Ubuntu, Arial, Verdana, sans-serif; font-size: 12px;"> <p> Hello _PARTNER_</p> Your task *_NAME_* is updated into stage _STAGE_. <br> Kindly refer below link for task detail. ]]>
         </field>
     </record>
-
-    <!--    <record id="project_tasks_status_send" model="base.automation">-->
-    <!--        <field name="name">Task Notification by Whatsapp</field>-->
-    <!--        <field name="model_id" ref="project.model_project_task"/>-->
-    <!--        <field name="trigger">on_write</field>-->
-    <!--        <field name="trigger_field_ids" eval="[(4, ref('project.field_project_task__stage_id'))]"/>-->
-    <!--        <field name="active" eval="True"/>-->
-    <!--        <field name="state">code</field>-->
-    <!--        <field name="code">-->
-    <!--            record.send_whatsapp_automatic()-->
-    <!--        </field>-->
-    <!--    </record>-->
-
-    <!--    <record id="project_tasks_update_status" model="mail.template">-->
-    <!--        <field name="name">Tasks: Tasks Update</field>-->
-    <!--        <field name="subject">Tasks Update</field>-->
-    <!--        <field name="model_id" ref="project.model_project_task"/>-->
-    <!--        <field name="body_html"><![CDATA[<div style="font-family: 'Lucica Grande', Ubuntu, Arial, Verdana, sans-serif; font-size: 12px;">-->
-    <!--        <p> Hello _PARTNER_</p>-->
-    <!--        Your task *_NAME_* is updated into stage _STAGE_.-->
-    <!--        <br>-->
-    <!--        Kindly refer below link for task detail.-->
-    <!--        ]]>-->
-    <!--        </field>-->
-    <!--    </record>-->
 </odoo>
