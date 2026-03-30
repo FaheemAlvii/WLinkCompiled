@@ -3,17 +3,17 @@
 import { ReceiptScreen } from "@point_of_sale/app/screens/receipt_screen/receipt_screen";
 import { patch } from "@web/core/utils/patch";
 import { useState } from "@odoo/owl";
-import { useService } from "@web/core/utils/hooks"; // Import useService for Odoo 18
-import { _t } from "@web/core/l10n/translation"; // Import translation service
+import { useService } from "@web/core/utils/hooks";
+import { _t } from "@web/core/l10n/translation";
 
 patch(ReceiptScreen.prototype, {
     setup() {
         super.setup(...arguments);
-        // Inject the notification service for displaying success/error messages
         this.notification = useService("notification");
 
         const order = this.currentOrder;
-        const partner = order ? order.get_partner() : null;
+        // Odoo 19: Use getPartner() instead of get_partner()
+        const partner = order ? (order.getPartner ? order.getPartner() : order.partner) : null;
         const orderName = order ? order.name : '';
 
         let number = "";
@@ -23,7 +23,7 @@ patch(ReceiptScreen.prototype, {
 
         this.orderUiState = useState({
             inputWhatsapp: number,
-            inputMessage: `Hello${partner ? ' ' + partner.name : ''}, here is your ${order?.is_to_invoice() ? 'invoice' : 'receipt'} for order: ${orderName}.`,
+            inputMessage: `Hello${partner ? ' ' + partner.name : ''}, here is your ${order?.is_to_invoice?.() ? 'invoice' : 'receipt'} for order: ${orderName}.`,
             isReceiptSending: false,
             isInvoiceSending: false,
             whatsappButtonDisabled: false,
@@ -45,17 +45,15 @@ patch(ReceiptScreen.prototype, {
         this.orderUiState.isReceiptSending = true;
 
         try {
-            const ticketImage = await this.generateTicketImage(); // base64 image
+            const ticketImage = await this.generateTicketImage();
             await this.pos.data.call("pos.order", "whatsapp_template_message", [
                 this.orderUiState.inputWhatsapp,
                 this.orderUiState.inputMessage,
                 ticketImage,
             ]);
-            // Replaced alert with the Odoo notification service for a success message
             this.notification.add(_t("Receipt sent successfully via WhatsApp."), { type: 'success' });
         } catch (error) {
             console.error("Error sending receipt via WhatsApp:", error);
-            // Replaced alert with the Odoo notification service for an error message
             this.notification.add(_t("Failed to send receipt."), { type: 'danger' });
         }
 
@@ -63,16 +61,17 @@ patch(ReceiptScreen.prototype, {
     },
 
     async onSendInvoiceWhatsapp() {
-        if (this.orderUiState.isInvoiceSending || !this.currentOrder.is_to_invoice()) return;
+        if (this.orderUiState.isInvoiceSending || !this.currentOrder?.is_to_invoice?.()) return;
         this.orderUiState.isInvoiceSending = true;
 
         try {
             const order = this.currentOrder;
             const orderId = order?.id;
-            const partner = order.get_partner();
+            // Odoo 19: Use getPartner() instead of get_partner()
+            const partner = order ? (order.getPartner ? order.getPartner() : order.partner) : null;
 
             if (!orderId) throw new Error("Order ID not found or not synced.");
-            if (!order.is_to_invoice()) throw new Error("Order is not marked for invoicing.");
+            if (!order.is_to_invoice?.()) throw new Error("Order is not marked for invoicing.");
             if (!partner) throw new Error("Please select a customer before sending invoice.");
 
             const result = await this.pos.data.call("pos.order", "whatsapp_template_message_with_invoice", [
@@ -83,14 +82,11 @@ patch(ReceiptScreen.prototype, {
 
             if (result && result.type === 'ir.actions.act_window') {
                 await this.pos.env.services.action.doAction(result);
-                // The action might open a wizard, so we don't show a direct success message here.
             } else {
-                // Replaced alert with the Odoo notification service for a success message
                 this.notification.add(_t("Invoice sent successfully via WhatsApp."), { type: 'success' });
             }
         } catch (error) {
             console.error("Error invoice sent via WhatsApp!", error);
-            // Replaced alert with the Odoo notification service for an error message
             this.notification.add(error.message || _t("Failed to send invoice."), { type: 'danger' });
         }
 
