@@ -25,7 +25,7 @@
                 </div>
             </div>
 
-            <div class="mt-4 send-whatsapp" t-if="currentOrder.is_to_invoice()">
+            <div class="mt-4 send-whatsapp" t-if="currentOrder?.isToInvoice?.()">
                 <div class="input-whatsapp">
                     <input type="tel" placeholder="Whatsapp: Invoice" t-model="orderUiState.inputWhatsapp"
                            t-on-input="onInputWhatsapp"
