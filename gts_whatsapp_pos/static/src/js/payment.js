@@ -8,7 +8,6 @@ odoo.define('gts_whatsapp_pos.CustomButtonPaymentScreen', function(require) {
   const Registries = require('point_of_sale.Registries');
   const PaymentScreen = require('point_of_sale.PaymentScreen');
   const Chrome = require('point_of_sale.Chrome');
-
    const CustomButtonPaymentScreen = (PaymentScreen) =>
        class extends PaymentScreen {
            setup() {

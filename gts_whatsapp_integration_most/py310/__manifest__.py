@@ -1,6 +1,6 @@
 {
-    'name': 'WhatsApp Messaging for Sales Apps',
-    'version': '18.0.1.0',
+    'name': 'WhatsApp Messaging for AiO Apps',
+    'version': '17.0.1.0',
     'summary': 'WhatsApp messaging integration for Sale, Purchase, Invoice, and Inventory modules.',
     'description': """
 Adds WhatsApp messaging functionality to Sale, Purchase, Invoice, and Inventory modules.

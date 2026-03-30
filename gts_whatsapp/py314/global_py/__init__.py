@@ -1,6 +1,9 @@
 import shelve
 from platformdirs import user_config_dir
 from pathlib import Path
+import logging
+
+_logger = logging.getLogger(__name__)
 
 
 def generate_payload(self, model='whatsapp_contacts.messaging_menu', template_mode=True, template_name=None, document_name=None):
@@ -37,7 +40,7 @@ class Config:
             db['base_url'] = db.get('base_url')
 
             if db.get('base_url') is None:
-                db['base_url'] = 'https://whatapi.geektechsol.com'
+                db['base_url'] = 'https://wlink.geektechsol.com'
 
             if db.get('templates_text') is None:
                 db['templates_text'] = {
@@ -64,12 +67,18 @@ class Config:
         return self.set('templates_text', new_templates_text)
 
     def get(self, name):
+        _logger.info(f"Config.get: file={self.config_file}")
         with shelve.open(self.config_file) as db:
-            return db[name]
+            value = db.get(name, None)
+            _logger.info(f"Config.get: {name} = {value}")
+            return value
 
     def set(self, name, value):
+        _logger.info(f"Config.set: file={self.config_file}")
         with shelve.open(self.config_file) as db:
             db[name] = value
+            db.sync()
+            _logger.info(f"Config.set: {name} = {value}")
 
 
 def fill_text(self, text):

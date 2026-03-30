@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 {
     'name': 'GTS WhatsApp CRM',
-    'version': '18.0.1.0',
+    'version': '17.0.1.0',
     'summary': 'Send WhatsApp messages to customers directly from CRM.',
     'description': """
 This module enables sending WhatsApp messages to customers easily from the CRM leads and opportunities.

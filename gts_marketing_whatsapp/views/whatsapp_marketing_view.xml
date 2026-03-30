@@ -91,19 +91,19 @@
         <field name="name">whatsapp.marketing.tree</field>
         <field name="model">whatsapp.marketing</field>
         <field name="arch" type="xml">
-            <list string="Whatsapp Message">
+            <tree string="Whatsapp Message">
                 <field name="whatsapp_templates_id"/>
                 <field name="whatsapp_model_id"/>
                 <field name="user_id"/>
                 <field name="state"/>
-            </list>
+            </tree>
         </field>
     </record>
 
 
     <record model="ir.actions.act_window" id="action_whatsapp_message">
         <field name="name">Mass Messages</field>
-        <field name="view_mode">list,form</field>
+        <field name="view_mode">tree,form</field>
         <field name="res_model">whatsapp.marketing</field>
     </record>
 

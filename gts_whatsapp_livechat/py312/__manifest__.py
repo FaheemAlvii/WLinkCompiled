@@ -2,7 +2,7 @@
 
 {
     'name': 'WhatsApp Live Chat (Discuss Integration)',
-    'version': '18.0.0.1.0',
+    'version': '17.0.0.1.0',
     'license': 'OPL-1',
     'author': "GTS",
     'summary': 'Chat with customers on WhatsApp directly from Odoo Discuss in real time.',

@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 {
     'name': 'GTS WhatsApp Project',
-    'version': '18.0.1.0',
+    'version': '17.0.1.0',
     'summary': 'Send WhatsApp messages to customers directly from Project management.',
     'description': """Easily send WhatsApp messages to customers and project stakeholders from within Odoo Project module. Enhance communication and automate notifications using WhatsApp integration and marketing automation.""",
     'category': 'Sales/Project',

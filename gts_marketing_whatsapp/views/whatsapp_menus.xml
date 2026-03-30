@@ -30,10 +30,10 @@
               action="action_whatsapp_message"
               name="Mass Messages" sequence="1"
               parent="menu_whatsapp_marketing"/>
-    <menuitem id="menu_whatsapp_campaign_list"
+    <menuitem id="menu_whatsapp_campaign_tree"
               name="Campaign Lists"
               parent="menu_whatsapp_marketing"
-              action="action_whatsapp_campaign_list"
+              action="action_whatsapp_campaign_tree"
               sequence="5"/>
 
     <menuitem id="whatsapp_menus_root" name="WhatsApp Marketing" sequence="10"/>

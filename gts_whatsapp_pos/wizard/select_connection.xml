@@ -25,7 +25,7 @@
         <field name="model">pos.config</field>
         <field name="inherit_id" ref="point_of_sale.view_pos_config_kanban"></field>
         <field name="arch" type="xml">
-            <xpath expr="//div[contains(@class, 'row') and @style='min-width:200px']/div[@class='col-6']" position="inside">
+            <xpath expr="//kanban/templates/t[@t-name='kanban-menu']/div[@class='container dropdown-pos-config']/div[@class='row']/div[@class='col-6 o_kanban_card_manage_section o_kanban_manage_new']" position="inside">
                 <div role="menuitem" class="o_kanban_card_manage_title">
                     <strong>Whatsapp</strong>
                 </div>

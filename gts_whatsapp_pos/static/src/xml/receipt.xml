@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <templates id="template" xml:space="preserve">
     <t t-name="gts_whatsapp_pos.ReceiptScreen" t-inherit="point_of_sale.ReceiptScreen" t-inherit-mode="extension">
-        <xpath expr="//div[@class='receipt-options d-flex flex-column gap-2']" position="inside">
-            <!-- Show to all users for now -->
+        <xpath expr="//form[hasclass('send-email')]" position="after">
             <div class="mt-4 send-whatsapp">
                 <div class="input-whatsapp">
                     <input type="tel" placeholder="Whatsapp: Receipt" t-model="orderUiState.inputWhatsapp"
@@ -10,21 +9,17 @@
                            t-att-class="{ highlight: orderUiState.whatsappButtonDisabled }"/>
                     <button class="send" t-on-click="onSendWhatsapp"
                             t-att-class="{ highlight: !orderUiState.whatsappButtonDisabled }"
-                            t-att-disabled="orderUiState.isReceiptSending"
+                            t-att-disabled="!is_valid_mobile()"
                             type="submit">
-                        <!-- Conditional display for spinning icon or whatsapp icon -->
-                        <t t-if="orderUiState.isReceiptSending">
-                            <i class="fa fa-spinner fa-spin" aria-hidden="true"/>
-                            Sending...
-                        </t>
-                        <t t-else="">
-                            <i class="fa fa-whatsapp" aria-hidden="true"/>
-                            Send Receipt
-                        </t>
+                        <i class="fa"
+                           t-att-class="orderUiState.isReceiptSending ? 'fa-fw fa-spin fa-circle-o-notch' : 'fa-brands fa-whatsapp'"
+                           aria-hidden="true"/>
+                         Send Receipt
                     </button>
                 </div>
             </div>
 
+            <!-- Invoice Button -->
             <div class="mt-4 send-whatsapp" t-if="currentOrder.is_to_invoice()">
                 <div class="input-whatsapp">
                     <input type="tel" placeholder="Whatsapp: Invoice" t-model="orderUiState.inputWhatsapp"
@@ -32,17 +27,12 @@
                            t-att-class="{ highlight: orderUiState.whatsappButtonDisabled }"/>
                     <button class="send" t-on-click="onSendInvoiceWhatsapp"
                             t-att-class="{ highlight: !orderUiState.whatsappButtonDisabled }"
-                            t-att-disabled="orderUiState.isInvoiceSending"
+                            t-att-disabled="!is_valid_mobile()"
                             type="submit">
-                        <!-- Conditional display for spinning icon or whatsapp icon -->
-                        <t t-if="orderUiState.isInvoiceSending">
-                            <i class="fa fa-spinner fa-spin" aria-hidden="true"/>
-                            Sending...
-                        </t>
-                        <t t-else="">
-                            <i class="fa fa-whatsapp" aria-hidden="true"/>
-                            Send Invoice
-                        </t>
+                        <i class="fa"
+                           t-att-class="orderUiState.isInvoiceSending ? 'fa-fw fa-spin fa-circle-o-notch' : 'fa-solid fa-file-text-o'"
+                           aria-hidden="true"/>
+                         Send Invoice
                     </button>
                 </div>
             </div>
@@ -53,11 +43,12 @@
 
             <div>
                 <textarea
-                        style="flex: 1; padding-left: 0.5rem; padding-top: 0.4rem; border-radius: 0.25rem !important; border: solid 1px rgb(206, 212, 218); color: #495057; transition: border-color 0.15s ease-in-out;"
-                        id="input_whatsapp" rows="2" cols="100" placeholder="Message"
-                        t-model="orderUiState.inputMessage" t-ref="input" name="note"
-                        onfocus="this.style.borderColor='#71639e'"
-                        onblur="this.style.borderColor='rgb(206, 212, 218)'"></textarea>
+                    style="flex: 1; padding-left: 0.5rem; padding-top: 0.4rem; border-radius: 0.25rem !important; border: solid 1px rgb(206, 212, 218); color: #495057; transition: border-color 0.15s ease-in-out;"
+                    rows="2" cols="100" placeholder="Message"
+                    t-model="orderUiState.inputMessage" t-ref="input" name="note"
+                    onfocus="this.style.borderColor='#71639e'"
+                    onblur="this.style.borderColor='rgb(206, 212, 218)'">
+                </textarea>
             </div>
         </xpath>
     </t>
