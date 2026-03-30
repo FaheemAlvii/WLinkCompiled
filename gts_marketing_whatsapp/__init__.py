@@ -27,22 +27,38 @@ if not os.path.isdir(_COMPILED_DIR):
         )
     )
 
-# Insert the version-specific directory at the beginning of sys.path
-# so that Odoo's import machinery finds the compiled modules.
-if _COMPILED_DIR not in sys.path:
-    sys.path.insert(0, _COMPILED_DIR)
+# Extend this package's __path__ so that relative imports
+# (e.g. "from . import models") resolve to the compiled subtree.
+if _COMPILED_DIR not in __path__:
+    __path__.insert(0, _COMPILED_DIR)
 
-# Re-read the original __init__.py from the compiled subtree if it exists,
-# otherwise import all sub-packages.
+# Parse the original __init__.py for import statements and execute them
+# via importlib to avoid circular import issues with exec().
 _init_in_compiled = os.path.join(_COMPILED_DIR, "__init__.py")
 if os.path.isfile(_init_in_compiled):
     with open(_init_in_compiled) as _f:
-        exec(compile(_f.read(), _init_in_compiled, "exec"))
+        for _line in _f:
+            _line = _line.strip()
+            if _line.startswith("from . import "):
+                _names = _line[len("from . import "):].split(",")
+                for _n in _names:
+                    _n = _n.strip()
+                    if _n:
+                        importlib.import_module("." + _n, __name__)
+            elif _line.startswith("from .") and " import " in _line:
+                _parts = _line.split(" import ", 1)
+                _pkg = _parts[0].replace("from ", "").strip()
+                importlib.import_module(_pkg, __name__)
+            elif _line.startswith("import "):
+                exec(_line)
 else:
-    # Fallback: import all Python files in the compiled directory
+    # Fallback: import all subdirectories and .py files
     for _entry in sorted(os.listdir(_COMPILED_DIR)):
-        if _entry.endswith(".py") and _entry != "__init__.py":
-            _mod_name = _entry[:-3]
+        _full = os.path.join(_COMPILED_DIR, _entry)
+        if _entry == "__init__.py":
+            continue
+        if os.path.isdir(_full) or _entry.endswith(".py"):
+            _mod_name = _entry[:-3] if _entry.endswith(".py") else _entry
             try:
                 importlib.import_module("." + _mod_name, __name__)
             except ImportError:
