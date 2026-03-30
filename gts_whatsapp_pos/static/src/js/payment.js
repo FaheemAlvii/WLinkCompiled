@@ -1,27 +1,21 @@
-odoo.define('gts_whatsapp_pos.CustomButtonPaymentScreen', function(require) {
-'use strict';
-  const { Gui } = require('point_of_sale.Gui');
-  const PosComponent = require('point_of_sale.PosComponent');
-  const { identifyError } = require('point_of_sale.utils');
-  const ProductScreen = require('point_of_sale.ProductScreen');
-  const { useListener } = require("@web/core/utils/hooks");
-  const Registries = require('point_of_sale.Registries');
-  const PaymentScreen = require('point_of_sale.PaymentScreen');
-  const Chrome = require('point_of_sale.Chrome');
+/** @odoo-module **/
 
-   const CustomButtonPaymentScreen = (PaymentScreen) =>
-       class extends PaymentScreen {
-           setup() {
-               super.setup();
-               useListener('click', this.IsCustomButton);
-           }
-           IsCustomButton() {
-              Gui.showPopup("ConfirmPopup", {
-                  title: this.env._t('Title'),
-                  body: this.env._t('Welcome to OWL(body of popup)'),
-              });
-          }
-      };
-   Registries.Component.extend(PaymentScreen, CustomButtonPaymentScreen);
-   return CustomButtonPaymentScreen;
+import { PaymentScreen } from "@point_of_sale/app/screens/payment_screen/payment_screen";
+import { patch } from "@web/core/utils/patch";
+import { _t } from "@web/core/l10n/translation";
+import { useService } from "@web/core/utils/hooks";
+
+patch(PaymentScreen.prototype, {
+    setup() {
+        this._super(...arguments);
+        // Custom setup logic here
+        this.notification = useService("notification");
+    },
+
+    /**
+     * Custom button handler - can be called from templates
+     */
+    onCustomButtonClick() {
+        this.notification.add(_t("Welcome to WhatsApp POS Integration!"), { type: 'info' });
+    },
 });

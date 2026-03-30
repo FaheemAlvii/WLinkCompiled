@@ -8,7 +8,7 @@ Streamline customer communication and keep them updated on repair status in real
 """,
     'author': 'GTS',
     'license': 'LGPL-3',
-    'version': '18.0.1.0',
+    'version': '19.0.1.0',
     'category': 'Repair',
     'images': ['static/description/repair_banner.jpg'],
     'depends': [

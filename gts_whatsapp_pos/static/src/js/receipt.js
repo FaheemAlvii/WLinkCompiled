@@ -27,8 +27,6 @@ patch(ReceiptScreen.prototype, {
             isReceiptSending: false,
             isInvoiceSending: false,
             whatsappButtonDisabled: false,
-            currentPartner: partner,
-            user: this.env.pos?.user || null,
         });
     },
 

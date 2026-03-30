@@ -2,7 +2,7 @@
     'name': 'WhatsApp API Handler',
     'author': 'GTS',
     'license': 'LGPL-3',
-    'version': '18.0.1.0',
+    'version': '19.0.1.0',
     'sequence': 1,
     'images': ['static/description/base_banner.jpg'],
     'summary': 'Manage WhatsApp API connections, templates, and synchronization.',
@@ -13,8 +13,8 @@ and connection status within Odoo.
     'category': 'Tools',
     'depends': ['mail', 'web', 'contacts'],
     'data': [
-        'security/ir.model.access.csv',
         'security/gts_security.xml',
+        'security/ir.model.access.csv',
         'wizard/base_url_editor.xml',
         'wizard/templates_editor.xml',
         'wizard/login_menu.xml',

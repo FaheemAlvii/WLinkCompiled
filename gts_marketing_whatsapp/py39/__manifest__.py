@@ -2,7 +2,7 @@
 
 {
     'name': 'Odoo WhatsApp Integration',
-    'version': '18.0.1.0',
+    'version': '19.0.1.0',
     'category': 'Marketing',
     'summary': 'Full WhatsApp messaging integration for Odoo with marketing and scheduling features.',
     'description': """

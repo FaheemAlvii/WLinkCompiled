@@ -1,6 +1,6 @@
 {
     'name': 'WhatsApp Messaging for Contacts',
-    'version': '18.0.1.0',
+    'version': '19.0.1.0',
     'summary': 'Send WhatsApp messages directly from the Contacts app.',
     'description': """
 Adds WhatsApp messaging functionality to the Odoo Contacts app.  
