@@ -1,0 +1,2 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+wlink_whatsapp_project.access_wlink_project_wizard,access_wlink_project_wizard,wlink_whatsapp_project.model_wlink_project_wizard,base.group_user,1,1,1,1
